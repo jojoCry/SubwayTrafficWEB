@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <link href="css/mui.min.css" rel="stylesheet"/>
+        <script src="js/mui.min.js"></script>
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+        <style>
+            body{
+                background-color: #D0D0D0;
+            }
+        </style>
+    </head>
+    <body>
+        <form class="mui-input-group" style="margin-top: 10%">
+            <div class="mui-input-row">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名">
+            </div>
+            <div class="mui-input-row">
+                <label>密码</label>
+                <input type="password" id="oncePwd" class="mui-input-password" placeholder="密码长度要大于8位">
+            </div>
+            <div class="mui-input-row">
+                <label>重复密码</label>
+                <input type="password" id="again" class="mui-input-password">
+            </div>
+            <div class="mui-button-row">
+                <button type="button" style="width: 30%;" id="submitPwd" class="mui-btn mui-btn-success mui-btn-outlined" > 注册</button>
+                <button type="button" style="width: 30%;" id="backBtn" class="mui-btn mui-btn-warning mui-btn-outlined" > 返回</button>
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript">
+        mui.init();
+        $("#backBtn").click(function () {
+            window.history.back();
+        });
+        
+        $("#submitPwd").click(function () {
+            const username = $("#username").val();
+            const password = $("#oncePwd").val();
+            const againPwd = $("#again").val();
+            if (password === againPwd) {
+                $.ajax({
+                    url: 'http://192.168.0.105:9188/user/v1/register',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        "username": username,
+                        "password": password,
+                    }),
+                    contentType: "application/json; charset=UTF-8",
+                    dataType: "json",
+                    success: function(response){
+                        console.log(response);
+                        mui.alert(`用户${username}注册成功`, "message");
+                    },
+                    error: function(error){
+                        console.log(JSON.stringify(error));
+                        mui.alert("注册失败", "error");
+                    },
+                });
+            } else {
+                mui.alert("两次密码不一致！", "error");
+            }
+        });
+    </script>
+</html>

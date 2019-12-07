@@ -1,11 +1,11 @@
 <!doctype html>
-<html>
+<html lang="zh-CN">
 	<head>
 		<meta charset="utf-8">
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<link href="css/mui.css" rel="stylesheet" />
-		<script src="js/mui.js"></script>
+        <link href="css/mui.min.css" rel="stylesheet"/>
+		<script src="js/mui.min.js"></script>
 		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 		<style>
 			body{
@@ -17,15 +17,15 @@
 		<form class="mui-input-group" style="margin-top: 10%">
 			<div class="mui-input-row">
 				<label>用户名</label>
-				<input type="text" id="username">
+				<input type="text" id="username" placeholder="请输入用户名" />
 			</div>
 		    <div class="mui-input-row">
-		        <label>密码</label>
-		        <input type="password" id="OldPwd" class="mui-input-password" placeholder="请输入密码">
+		        <label>旧密码</label>
+		        <input type="password" id="OldPwd" class="mui-input-password" placeholder="请输入密码" />
 		    </div>
 			<div class="mui-input-row">
-			    <label>重复密码</label>
-			    <input type="password" id="NewPwd" class="mui-input-password" placeholder="请输入密码">
+			    <label>新密码</label>
+			    <input type="password" id="NewPwd" class="mui-input-password" placeholder="新的密码长度不能小于8位" />
 			</div>
 		    <div class="mui-button-row">
 		        <button type="button" style="width: 30%;" id="submitPwd" class="mui-btn mui-btn-success mui-btn-outlined" > 确认</button>
@@ -44,7 +44,7 @@
 			const oldPwd = $("#OldPwd").val();
 			const newPwd = $("#NewPwd").val();
 			$.ajax({
-				url: 'http://192.168.0.103:9188/user/v1/modify/password',
+				url: 'http://192.168.0.105:9188/user/v1/modify/password',
 				type: 'put',
 				data: JSON.stringify({
 					"username": username,
@@ -53,11 +53,11 @@
 				}),
 				contentType: "application/json; charset=UTF-8",
 				dataType: "json",
-				success: function(response){
-					alert(JSON.stringify(response));
+				success: function(){
+					mui.alert("密码修改成功", "message");
 				},
-				error: function(error){
-					alert(JSON.stringify(error.responseJSON));
+				error: function(){
+					mui.alert("错误的用户名或原密码", "error");
 				}
 			})
 		});
