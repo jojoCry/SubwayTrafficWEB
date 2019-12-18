@@ -28,8 +28,8 @@
 		</div>
 		<form class="mui-input-group" style="margin-top: 10%">
 			<div class="mui-input-row">
-				<label>用户名</label>
-			<input type="text" id="username" class="mui-input-clear" placeholder="请输入用户名">
+				<label>邮箱</label>
+			<input type="text" id="usermail" class="mui-input-clear" placeholder="请输入注册邮箱">
 			</div>
 			<div class="mui-input-row">
 				<label>密码</label>
@@ -45,31 +45,30 @@
 	<script type="text/javascript" charset="utf-8">
 			mui.init();
 			$("#login").click(function () {
-				const uname = $("#username").val();
+				const usermail = $("#usermail").val();
 				const password = $("#password").val();
-				if (mui.isEmptyObject(uname) || mui.isEmptyObject(password)) {
-					mui.alert("用户名或密码为空", "message");
+				if (mui.isEmptyObject(usermail) || mui.isEmptyObject(password)) {
+					mui.alert("邮箱或密码为空", "message");
 				} else {
 					$.ajax({
-						url: "http://192.168.0.105:9188/system/v1/login",
+						url: "http://192.168.0.104:9188/system/v1/login",
 						type: "post",
 						data: JSON.stringify({
-							"username": uname,
+							"email": usermail,
 							"password": password
 						}),
 						contentType: "application/json; charset=UTF-8",
 						dataType: "json",
 						success: function(response){
-							mui.alert("欢迎登陆", "message");
+							mui.alert("欢迎登录", "message");
 							console.log(response.token);
-							// window.location.href = "https://www.baidu.com";
 						},
 						error: function(response){
-							const statusCode = JSON.stringify(response.status);
-							if (statusCode === '403') {
-								mui.alert("密码错误", "error");
-							} else if (statusCode === '404' ) {
-								mui.alert("找不到该用户", "error");
+							const statusCode = JSON.stringify(response. status);
+							if (statusCode === '404') {
+								mui.alert("邮箱或密码错误", "error");
+							} else if (statusCode === '403' ) {
+								mui.alert("重复登录", "error");
 							}
 						}
 					});
@@ -77,7 +76,7 @@
 			});
 
 			$("#changePwd").click(function () {
-				window.location.href = "changePwd.html";
+				window.location.href = "editInfo.html";
 			});
 
 			$("#register").click(function () {

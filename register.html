@@ -16,19 +16,23 @@
     <body>
         <form class="mui-input-group" style="margin-top: 10%">
             <div class="mui-input-row">
+                <label>注册邮箱</label>
+                <input type="text" id="user_mail" placeholder="email">
+            </div>
+            <div class="mui-input-row">
                 <label>用户名</label>
                 <input type="text" id="username" placeholder="请输入用户名">
             </div>
             <div class="mui-input-row">
                 <label>密码</label>
-                <input type="password" id="oncePwd" class="mui-input-password" placeholder="密码长度要大于8位">
+                <input type="password" id="password" class="mui-input-password" placeholder="密码长度要大于8位">
             </div>
             <div class="mui-input-row">
                 <label>重复密码</label>
-                <input type="password" id="again" class="mui-input-password">
+                <input type="password" id="pwd_again" class="mui-input-password">
             </div>
             <div class="mui-button-row">
-                <button type="button" style="width: 30%;" id="submitPwd" class="mui-btn mui-btn-success mui-btn-outlined" > 注册</button>
+                <button type="button" style="width: 30%;" id="submitReg" class="mui-btn mui-btn-success mui-btn-outlined" > 注册</button>
                 <button type="button" style="width: 30%;" id="backBtn" class="mui-btn mui-btn-warning mui-btn-outlined" > 返回</button>
             </div>
         </form>
@@ -39,15 +43,17 @@
             window.history.back();
         });
         
-        $("#submitPwd").click(function () {
+        $("#submitReg").click(function () {
+            const user_mail = $("#user_mail").val();
             const username = $("#username").val();
-            const password = $("#oncePwd").val();
-            const againPwd = $("#again").val();
-            if (password === againPwd) {
+            const password = $("#password").val();
+            const pwd_again = $("#pwd_again").val();
+            if (password === pwd_again) {
                 $.ajax({
-                    url: 'http://192.168.0.105:9188/user/v1/register',
+                    url: 'http://192.168.0.104:9188/user/v1/register',
                     type: 'POST',
                     data: JSON.stringify({
+                        "email": user_mail,
                         "username": username,
                         "password": password,
                     }),
@@ -59,7 +65,13 @@
                     },
                     error: function(error){
                         console.log(JSON.stringify(error));
-                        mui.alert("注册失败", "error");
+                        if (error.status === 400) {
+                            mui.alert("邮箱格式错误", "error");
+                        } else if (error.status === 403) {
+                            mui.alert("邮箱已经注册或密码长度不够", "error");
+                        } else {
+                            mui.alert("系统错误", "error");
+                        }
                     },
                 });
             } else {
