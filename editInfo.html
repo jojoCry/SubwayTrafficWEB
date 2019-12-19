@@ -17,11 +17,11 @@
 		<form class="mui-input-group" style="margin-top: 15%">
 			<div class="mui-input-row">
 				<label>注册邮箱:</label>
-				<input type="text" id="user_mail" placeholder="email" onblur="exist()" />
+				<input type="text" id="user_mail" placeholder="邮箱地址" />
 			</div>
 		    <div class="mui-input-row">
 				<label>验证码:</label>
-				<input type="text" id="vcode" />
+				<input type="text" id="vcode" placeholder="点击框内自动发送验证码" onfocus="exist()" />
 		    </div>
 			<div id="pwd_Module" style="display: none">
 				<div class="mui-input-row">
@@ -35,7 +35,7 @@
 			</div>
 		    <div class="mui-button-row">
 		        <button type="button" style="width: 30%;" id="submitPwd" class="mui-btn mui-btn-success mui-btn-outlined" > 确认</button>
-				<button type="button" style="width: 30%;" id="xbackBtn" class="mui-btn mui-btn-warning mui-btn-outlined" > 返回</button>
+				<button type="button" style="width: 30%;" id="backBtn" class="mui-btn mui-btn-warning mui-btn-outlined" > 返回</button>
 		    </div>
 		</form>
 	</body>
@@ -43,31 +43,45 @@
 		mui.init();
 		const exist = function () {
 			const user_mail = $("#user_mail").val();
-			$.ajax({
-				url: 'http://192.168.0.104:9188/user/v1/exist',
-				type: 'POST',
-				data: JSON.stringify({
-					"email": user_mail
-				}),
-				contentType: "application/json; charset=UTF-8",
-				dataType: "json",
-				success: function (response) {
-					if (response === 1) {
-						mui.toast("用户验证通过");
-						document.getElementById("pwd_Module").style.display = 'block';
-						setTimeout(function () {
-							mui.toast("发送验证码…");
-							// 2019年12月19日 00:17:10
-							// 发送验证码功能接口。
-							// author: Gaoxiangyu
-						},2500);
-					} else if (response === 0) {
-						mui.toast("当前用户不存在");
-					} else {
+			if (user_mail === '' || user_mail === null) {
+				mui.toast("邮箱不能为空哦(>▽<)")
+			} else {
+				$.ajax({
+					url: 'http://192.168.0.104:9188/user/v1/exist',
+					type: 'POST',
+					data: JSON.stringify({
+						"email": user_mail
+					}),
+					contentType: "application/json; charset=UTF-8",
+					dataType: "json",
+					success: function (response) {
+						if (response === 1) {
+							$("#vcode").removeAttr('onfocus');
+							mui.toast("用户验证通过");
+							$("#pwd_Module").css('display', 'block');
+							setTimeout(function () {
+								mui.toast("发送验证码…");
+								$.ajax({
+									url: 'http://192.168.0.104:9188/email/v1/code',
+									type: 'POST',
+									data: JSON.stringify({
+										"receiver": [user_mail],
+										"header": "验证码邮件通知",
+										"operate": "修改密码"
+									}),
+									contentType: "application/json; charset=UTF-8",
+									dataType: "json"
+								});
+							},2500);
+						} else if (response === 0) {
+							mui.toast("当前用户不存在");
+						}
+					},
+					error: function () {
 						mui.toast("系统异常…");
 					}
-				}
-			});
+				});
+			}
 		};
 
 		$("#backBtn").click(function () {
@@ -77,26 +91,32 @@
 		$("#submitPwd").click(function () {
 			const user_mail = $("#user_mail").val();
 			const new_pwd = $("#new_pwd").val();
-			const old_pwd = '';
-			const uuid = '';
-			$.ajax({
-				url: 'http://192.168.0.104:9188/user/v1/modify',
-				type: 'PUT',
-				data: JSON.stringify({
-					"uuid": '',
-					"email": user_mail,
-					"password": '',
-					"new_password": new_pwd
-				}),
-				contentType: "application/json; charset=UTF-8",
-				dataType: "json",
-				success: function(){
-
-				},
-				error: function(){
-
-				}
-			})
+			const pwd_again = $("#pwd_again").val();
+			const vcode = $("#vcode").val();
+			const uuid = "0qoxpojl-7y1d-mkxi-3t6blzz0";
+			if (new_pwd === pwd_again) {
+				$.ajax({
+					url: 'http://192.168.0.104:9188/user/v1/modify',
+					type: 'PUT',
+					data: JSON.stringify({
+						"uuid": uuid,
+						"email": user_mail,
+						"verify_code": vcode,
+						"new_password": new_pwd
+					}),
+					contentType: "application/json; charset=UTF-8",
+					dataType: "json",
+					success: function(){
+						mui.toast("密码修改成功,跳转至登录页面");
+						window.location.href = "index.html";
+					},
+					error: function(){
+						mui.toast("系统异常，请稍后再试");
+					}
+				})
+			} else {
+				mui.toast("两次密码不一致~")
+			}
 		});
 	</script>
 </html>
