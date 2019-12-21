@@ -44,11 +44,12 @@
 	</body>
 	<script type="text/javascript" charset="utf-8">
 			mui.init();
+
 			$("#login").click(function () {
 				const usermail = $("#usermail").val();
 				const password = $("#password").val();
 				if (mui.isEmptyObject(usermail) || mui.isEmptyObject(password)) {
-					mui.alert("邮箱或密码为空", "message");
+					mui.toast("邮箱或密码为空");
 				} else {
 					$.ajax({
 						url: "http://192.168.0.104:9188/system/v1/login",
@@ -60,15 +61,15 @@
 						contentType: "application/json; charset=UTF-8",
 						dataType: "json",
 						success: function(response){
-							mui.alert("欢迎登录", "message");
+							mui.toast("欢迎登录");
 							console.log(response.token);
 						},
 						error: function(response){
 							const statusCode = JSON.stringify(response. status);
 							if (statusCode === '404') {
-								mui.alert("邮箱或密码错误", "error");
+								mui.toast("邮箱或密码错误");
 							} else if (statusCode === '403' ) {
-								mui.alert("重复登录", "error");
+								mui.toast("重复登录");
 							}
 						}
 					});

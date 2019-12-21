@@ -39,6 +39,7 @@
     </body>
     <script type="text/javascript">
         mui.init();
+
         $("#backBtn").click(function () {
             window.history.back();
         });
@@ -61,21 +62,21 @@
                     dataType: "json",
                     success: function(response){
                         console.log(response);
-                        mui.alert(`用户${username}注册成功`, "message");
+                        mui.toast(`用户${username}注册成功`);
                     },
                     error: function(error){
                         console.log(JSON.stringify(error));
                         if (error.status === 400) {
-                            mui.alert("邮箱格式错误", "error");
+                            mui.toast("邮箱格式错误");
                         } else if (error.status === 403) {
-                            mui.alert("邮箱已经注册或密码长度不够", "error");
+                            mui.toast("邮箱已经注册或密码长度不够");
                         } else {
-                            mui.alert("系统错误", "error");
+                            mui.toast("系统错误");
                         }
                     },
                 });
             } else {
-                mui.alert("两次密码不一致！", "error");
+                mui.toast("两次密码不一致！");
             }
         });
     </script>
