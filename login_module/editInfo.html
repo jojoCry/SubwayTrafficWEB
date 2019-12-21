@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <script src="../js/mui.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #D0D0D0;
+        }
+    </style>
+</head>
+<body>
+<form class="mui-input-group" style="margin-top: 15%">
+    <div class="mui-input-row">
+        <label>注册邮箱:</label>
+        <input type="text" id="user_mail" placeholder="邮箱地址"/>
+    </div>
+    <div class="mui-input-row">
+        <label>验证码:</label>
+        <input type="text" id="vcode" placeholder="点击框内自动发送验证码" onfocus="exist()"/>
+    </div>
+    <div id="pwd_Module" style="display: none">
+        <div class="mui-input-row">
+            <label>新密码</label>
+            <input type="password" id="new_pwd" class="mui-input-password" placeholder="新的密码长度不能小于8位"/>
+        </div>
+        <div class="mui-input-row">
+            <label>重复密码</label>
+            <input type="password" id="pwd_again" class="mui-input-password" placeholder="新的密码长度不能小于8位"/>
+        </div>
+    </div>
+    <div class="mui-button-row">
+        <button type="button" style="width: 30%;" id="submitPwd" class="mui-btn mui-btn-success mui-btn-outlined"> 确认
+        </button>
+        <button type="button" style="width: 30%;" id="backBtn" class="mui-btn mui-btn-warning mui-btn-outlined"> 返回
+        </button>
+    </div>
+</form>
+</body>
+<script type="text/javascript" charset="utf-8">
+    mui.init();
+
+    let uuid = '';
+    const exist = function () {
+        const user_mail = $("#user_mail").val();
+        if (user_mail === '' || user_mail === null) {
+            mui.toast("邮箱不能为空哦(>▽<)")
+        } else {
+            $.ajax({
+                url: 'http://192.168.0.104:9188/user/v1/exist',
+                type: 'POST',
+                data: JSON.stringify({
+                    "email": user_mail
+                }),
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                success: function (response) {
+                    uuid = response.uuid;
+                    if (response.exist === 1) {
+                        $("#vcode").removeAttr('onfocus');
+                        mui.toast("用户验证通过");
+                        $("#pwd_Module").css('display', 'block');
+                        setTimeout(function () {
+                            mui.toast("发送验证码…");
+                            $.ajax({
+                                url: 'http://192.168.0.104:9188/email/v1/code',
+                                type: 'POST',
+                                data: JSON.stringify({
+                                    "receiver": [user_mail],
+                                    "header": "验证码邮件通知",
+                                    "operate": "修改密码"
+                                }),
+                                contentType: "application/json; charset=UTF-8",
+                                dataType: "json"
+                            });
+                        }, 2500);
+                    } else if (response.exist === 0) {
+                        mui.toast("当前用户不存在");
+                    }
+                },
+                error: function () {
+                    mui.toast("系统异常…");
+                }
+            });
+        }
+    };
+
+    $("#backBtn").click(function () {
+        window.history.back();
+    });
+
+    $("#submitPwd").click(function () {
+        const user_mail = $("#user_mail").val();
+        const new_pwd = $("#new_pwd").val();
+        const pwd_again = $("#pwd_again").val();
+        const vcode = $("#vcode").val();
+        if (new_pwd === pwd_again) {
+            $.ajax({
+                url: 'http://192.168.0.104:9188/user/v1/modify',
+                type: 'PUT',
+                data: JSON.stringify({
+                    "uuid": uuid,
+                    "email": user_mail,
+                    "verify_code": vcode,
+                    "new_password": new_pwd
+                }),
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                success: function () {
+                    mui.toast("修改成功");
+                    setTimeout(function () {
+                        window.location.href = "index.html";
+                    }, 2000);
+                },
+                error: function (response) {
+                    if (response.status === 403) {
+                        mui.toast("修改失败，请检查输入信息是否正确");
+                    } else {
+                        mui.toast("还不能登录哦╮(╯▽╰)╭");
+                    }
+                }
+            })
+        } else {
+            mui.toast("两次密码不一致~")
+        }
+    });
+</script>
+</html>

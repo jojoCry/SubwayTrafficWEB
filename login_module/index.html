@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <script src="../js/mui.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #D0D0D0;
+        }
+
+        .appTitle {
+            font: italic 1em Georgia, serif;
+            font-size: 300%;
+            margin-top: 5%;
+            color: #856363;
+        }
+
+        .mui-input-group {
+            background-color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+<div class="appTitle" align="center">
+    SubwayTraffic
+</div>
+<form class="mui-input-group" style="margin-top: 10%">
+    <div class="mui-input-row">
+        <label>邮箱</label>
+        <input type="text" id="usermail" class="mui-input-clear" placeholder="请输入注册邮箱">
+    </div>
+    <div class="mui-input-row">
+        <label>密码</label>
+        <input type="password" id="password" class="mui-input-password" placeholder="请输入密码">
+    </div>
+    <div class="mui-button-row">
+        <button type="button" style="float: left; width: 30%;" id="register"
+                class="mui-btn mui-btn-primary mui-btn-outlined">注册
+        </button>
+        <button type="button" style="align-content: center; width: 30%;" id="login"
+                class="mui-btn mui-btn-success mui-btn-outlined">确认
+        </button>
+        <button type="button" style="float: right; width: 30%" id="changePwd"
+                class="mui-btn mui-btn-warning mui-btn-outlined">修改密码
+        </button>
+    </div>
+</form>
+</body>
+<script type="text/javascript" charset="utf-8">
+    mui.init();
+
+    $("#login").click(function () {
+        const usermail = $("#usermail").val();
+        const password = $("#password").val();
+        if (mui.isEmptyObject(usermail) || mui.isEmptyObject(password)) {
+            mui.toast("邮箱或密码为空");
+        } else {
+            $.ajax({
+                url: "http://192.168.0.104:9188/system/v1/login",
+                type: "post",
+                data: JSON.stringify({
+                    "email": usermail,
+                    "password": password
+                }),
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                success: function (response) {
+                    mui.toast("欢迎登录");
+                    console.log(response.token);
+                },
+                error: function (response) {
+                    const statusCode = JSON.stringify(response.status);
+                    if (statusCode === '404') {
+                        mui.toast("邮箱或密码错误");
+                    } else if (statusCode === '403') {
+                        mui.toast("重复登录");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#changePwd").click(function () {
+        window.location.href = "editInfo.html";
+    });
+
+    $("#register").click(function () {
+        window.location.href = "register.html";
+    });
+</script>
+</html>
