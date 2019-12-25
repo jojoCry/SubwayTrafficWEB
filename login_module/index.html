@@ -8,6 +8,7 @@
     <link href="../css/mui.min.css" rel="stylesheet"/>
     <script src="../js/mui.min.js"></script>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../properties.js"></script>
     <style>
         body {
             background-color: #D0D0D0;
@@ -53,6 +54,7 @@
 </body>
 <script type="text/javascript" charset="utf-8">
     mui.init();
+    let path = http_url + "/system/v1/login";
 
     $("#login").click(function () {
         const usermail = $("#usermail").val();
@@ -61,7 +63,7 @@
             mui.toast("邮箱或密码为空");
         } else {
             $.ajax({
-                url: "http://192.168.0.104:9188/system/v1/login",
+                url: path,
                 type: "post",
                 data: JSON.stringify({
                     "email": usermail,
@@ -70,16 +72,12 @@
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
                 success: function (response) {
-                    mui.toast("欢迎登录");
-                    console.log(response.token);
+                    console.log(response);
+                    window.location.href = '../main_info_module/personal_center.html';
                 },
                 error: function (response) {
-                    const statusCode = JSON.stringify(response.status);
-                    if (statusCode === '404') {
-                        mui.toast("邮箱或密码错误");
-                    } else if (statusCode === '403') {
-                        mui.toast("重复登录");
-                    }
+                    const errMsg = response.responseJSON.tips;
+                    mui.toast(`${errMsg.stp_code}${errMsg.tips_zh}`);
                 }
             });
         }

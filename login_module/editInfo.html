@@ -8,6 +8,7 @@
     <link href="../css/mui.min.css" rel="stylesheet"/>
     <script src="../js/mui.min.js"></script>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../properties.js"></script>
     <style>
         body {
             background-color: #D0D0D0;
@@ -44,15 +45,19 @@
 </body>
 <script type="text/javascript" charset="utf-8">
     mui.init();
-
+    let exist_path = http_url + "/user/v1/exist";
+    let code_path = http_url + "/email/v1/code";
+    let modify_path = http_url + "/user/v1/modify";
     let uuid = '';
+
+
     const exist = function () {
         const user_mail = $("#user_mail").val();
         if (user_mail === '' || user_mail === null) {
             mui.toast("邮箱不能为空哦(>▽<)")
         } else {
             $.ajax({
-                url: 'http://192.168.0.104:9188/user/v1/exist',
+                url: exist_path,
                 type: 'POST',
                 data: JSON.stringify({
                     "email": user_mail
@@ -68,7 +73,7 @@
                         setTimeout(function () {
                             mui.toast("发送验证码…");
                             $.ajax({
-                                url: 'http://192.168.0.104:9188/email/v1/code',
+                                url: code_path,
                                 type: 'POST',
                                 data: JSON.stringify({
                                     "receiver": [user_mail],
@@ -101,7 +106,7 @@
         const vcode = $("#vcode").val();
         if (new_pwd === pwd_again) {
             $.ajax({
-                url: 'http://192.168.0.104:9188/user/v1/modify',
+                url: modify_path,
                 type: 'PUT',
                 data: JSON.stringify({
                     "uuid": uuid,
@@ -114,7 +119,7 @@
                 success: function () {
                     mui.toast("修改成功");
                     setTimeout(function () {
-                        window.location.href = "index.html";
+                        window.location.href = "./index.html";
                     }, 2000);
                 },
                 error: function (response) {
