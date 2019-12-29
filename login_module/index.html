@@ -73,11 +73,11 @@
                 dataType: "json",
                 success: function (response) {
                     console.log(response);
-                    window.location.href = '../main_info_module/personal_center.html';
+                    window.location.href = '../main_info_module/admin_center.html';
                 },
                 error: function (response) {
                     const errMsg = response.responseJSON.tips;
-                    mui.toast(`${errMsg.stp_code}${errMsg.tips_zh}`);
+                    mui.toast(`${errMsg.stp_code},${errMsg.tips_zh}`);
                 }
             });
         }
