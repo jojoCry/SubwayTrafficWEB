@@ -65,20 +65,15 @@
                 }),
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
-                success: function (response) {
-                    mui.toast(`用户${username}注册成功`);
+                success: function () {
+                    mui.toast(`用户[${username}]注册成功,正在跳转页面…`);
                     setTimeout(function () {
                         window.location.href = "./index.html"
                     },2000)
                 },
-                error: function (error) {
-                    if (error.status === 400) {
-                        mui.toast("邮箱格式错误");
-                    } else if (error.status === 403) {
-                        mui.toast("邮箱已经注册或密码长度不够");
-                    } else {
-                        mui.toast("系统错误");
-                    }
+                error: function (response) {
+                    const errMsg = response.responseJSON.tips;
+                    mui.toast(`${errMsg.stp_code},${errMsg.tips_zh}`);
                 },
             });
         } else {

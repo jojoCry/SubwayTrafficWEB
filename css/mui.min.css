@@ -1195,6 +1195,7 @@ p {
 }
 
 .mui-bar-tab .mui-tab-item {
+    touch-action: none;
     display: table-cell;
     overflow: hidden;
     width: 1%;

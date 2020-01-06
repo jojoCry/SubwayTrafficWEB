@@ -88,8 +88,9 @@
                         mui.toast("当前用户不存在");
                     }
                 },
-                error: function () {
-                    mui.toast("系统异常…");
+                error: function (response) {
+                    const errMsg = response.responseJSON.tips;
+                    mui.toast(`${errMsg.stp_code},${errMsg.tips_zh}`);
                 }
             });
         }
@@ -123,11 +124,8 @@
                     }, 2000);
                 },
                 error: function (response) {
-                    if (response.status === 403) {
-                        mui.toast("修改失败，请检查输入信息是否正确");
-                    } else {
-                        mui.toast("还不能登录哦╮(╯▽╰)╭");
-                    }
+                    const errMsg = response.responseJSON.tips;
+                    mui.toast(`${errMsg.stp_code},${errMsg.tips_zh}`);
                 }
             })
         } else {

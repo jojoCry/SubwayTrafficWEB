@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <script src="../js/mui.min.js"></script>
+    <script src="../js/mui.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../properties.js"></script>
+    <style>
+        body {
+            background-color: #feffd9;
+        }
+    </style>
+</head>
+<body>
+    <nav class="mui-bar mui-bar-tab">
+        <a id="defaultTab" class="mui-tab-item mui-active" href="admin_line.html">
+            <span class="mui-icon mui-icon-map"></span>
+            <span class="mui-tab-label">地铁线路</span>
+        </a>
+        <a class="mui-tab-item" href="admin_userEdit.html">
+            <span class="mui-icon mui-icon-person"></span>
+            <span class="mui-tab-label">用户管理</span>
+        </a>
+        <a class="mui-tab-item" href="admin_mine.html">
+            <span class="mui-icon mui-icon-contact"></span>
+            <span class="mui-tab-label">我的</span>
+        </a>
+    </nav>
+</body>
+<script type="text/javascript" charset="UTF-8">
+    //mui初始化
+    mui.init();
+    const subpages = ['admin_line.html', 'admin_userEdit.html', 'admin_mine.html'];
+    const subpage_style = {
+        top: '0px',
+        bottom: '51px'
+    };
+    const aniShow = {};
+    //创建子页面，首个选项卡页面显示，其它均隐藏；
+    mui.plusReady(function() {
+        const self = plus.webview.currentWebview();
+        for (let i = 0; i < subpages.length; i++) {
+            const temp = {};
+            const sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
+            if (i > 0) {
+                sub.hide();
+            }else{
+                temp[subpages[i]] = "true";
+                mui.extend(aniShow,temp);
+            }
+            self.append(sub);
+        }
+    });
+    //当前激活选项
+    let activeTab = subpages[0];
+
+    //选项卡点击事件
+    mui('.mui-bar-tab').on('tap', 'a', function(e) {
+        const targetTab = this.getAttribute('href');
+        if (targetTab == activeTab) {
+            return;
+        }
+        //显示目标选项卡
+        //若为iOS平台或非首次显示，则直接显示
+        if(mui.os.ios||aniShow[targetTab]){
+            plus.webview.show(targetTab);
+        }else{
+            //否则，使用fade-in动画，且保存变量
+            const temp = {};
+            temp[targetTab] = "true";
+            mui.extend(aniShow,temp);
+            plus.webview.show(targetTab,"fade-in",300);
+        }
+        //隐藏当前;
+        plus.webview.hide(activeTab);
+        //更改当前活跃的选项卡
+        activeTab = targetTab;
+    });
+    //自定义事件，模拟点击“首页选项卡”
+    document.addEventListener('gohome', function() {
+        const defaultTab = document.getElementById("defaultTab");
+        //模拟首页点击
+        mui.trigger(defaultTab, 'tap');
+        //切换选项卡高亮
+        const current = document.querySelector(".mui-bar-tab>.mui-tab-item.mui-active");
+        if (defaultTab !== current) {
+            current.classList.remove('mui-active');
+            defaultTab.classList.add('mui-active');
+        }
+    });
+</script>
+</html>

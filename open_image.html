@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div>
+        <img src="img/微信图片_20200104150818.jpg" alt="">
+    </div>
+</body>
+<script type="text/javascript" charset="UTF-8">
+    window.onload = function () {
+        console.log(localStorage.getItem("token"));
+        console.log(localStorage.getItem("type"));
+        const token = localStorage.getItem("token");
+        const type = localStorage.getItem("type");
+        if (token != null) {
+            if (type === '0') {
+                setInterval(function () {
+                    window.location.href = './main_info_module/admin_nav.html';
+                },3000);
+            } else {
+                setInterval(function () {
+                    window.location.href = './main_info_module/user_page.html';
+                },3000);
+            }
+        } else {
+            setInterval(function () {
+                window.location.href = './login_module/index.html';
+            },3000);
+        }
+    }
+</script>
+</html>

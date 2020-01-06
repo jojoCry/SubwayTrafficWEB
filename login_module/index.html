@@ -72,8 +72,19 @@
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
                 success: function (response) {
-                    console.log(response);
-                    window.location.href = '../main_info_module/admin_center.html';
+                    if (response.type === 1) {
+                        const token = response.token;
+                        const type = response.type;
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("type", type);
+                        window.location.href = '../main_info_module/user_page.html';
+                    } else if (response.type === 0) {
+                        const token = response.token;
+                        const type = response.type;
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("type", type);
+                        window.location.href = '../main_info_module/admin_nav.html';
+                    }
                 },
                 error: function (response) {
                     const errMsg = response.responseJSON.tips;
