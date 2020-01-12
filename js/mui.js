@@ -2239,11 +2239,9 @@ Function.prototype.bind = Function.prototype.bind || function(to) {
 	};
 	/**
 	 * 打开新窗口
-	 * @param {string} url 要打开的页面地址
-	 * @param {string} id 指定页面ID
-	 * @param {object} options 可选:参数,等待,窗口,显示配置{params:{},waiting:{},styles:{},show:{}}
+	 * @param {{id: string, url: string}} url 要打开的页面地址
 	 */
-	$.openWindow = function(url, id, options) {
+	$.openWindow = function (url) {
 		if(typeof url === 'object') {
 			options = url;
 			url = options.url;

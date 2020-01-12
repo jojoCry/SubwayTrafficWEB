@@ -6,6 +6,7 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
     <link href="../css/mui.min.css" rel="stylesheet"/>
+    <script src="../js/mui.js"></script>
     <script src="../js/mui.min.js"></script>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="../properties.js"></script>
@@ -53,7 +54,7 @@
 </form>
 </body>
 <script type="text/javascript" charset="utf-8">
-    mui.init();
+    mui.init({});
     let path = http_url + "/system/v1/login";
 
     $("#login").click(function () {
@@ -77,13 +78,19 @@
                         const type = response.type;
                         localStorage.setItem("token", token);
                         localStorage.setItem("type", type);
-                        window.location.href = '../main_info_module/user_page.html';
+                        mui.openWindow({
+                            id: 'user_page.html',
+                            url: '../main_info_module/user_page.html'
+                        });
                     } else if (response.type === 0) {
                         const token = response.token;
                         const type = response.type;
                         localStorage.setItem("token", token);
                         localStorage.setItem("type", type);
-                        window.location.href = '../main_info_module/admin_nav.html';
+                        mui.openWindow({
+                            id: 'admin_nav.html',
+                            url: '../main_info_module/admin_nav.html'
+                        });
                     }
                 },
                 error: function (response) {
