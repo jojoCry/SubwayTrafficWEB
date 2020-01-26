@@ -8,13 +8,78 @@
     <link href="../css/mui.min.css" rel="stylesheet"/>
     <script src="../js/mui.min.js"></script>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../properties.js"></script>
     <style>
         body {
             background-color: #feffd9;
+            margin-top: 45px;
         }
     </style>
 </head>
 <body>
-    <p>edit page!</p>
+<ul class="mui-table-view" id="userInfo">
+</ul>
 </body>
+<script type="text/javascript" charset="UTF-8">
+    mui.init({});
+    const text = '锁定用户';
+
+    $("#userInfo").html("");
+    $.ajax({
+        url: http_url + '/user/v1/users',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': 'RB3SZhF3kk'
+        },
+        success: function (response) {
+            console.log(response.users);
+            let dataOptions = '';
+            for (let i = 0; i < response.users.length; i++) {
+                dataOptions += '<li class="mui-table-view-cell mui-collapse">';
+                dataOptions += '<a class="mui-navigate-right" href="#">' + response.users[i].username + '</a>';
+                dataOptions += '<div class="mui-collapse-content">';
+                dataOptions += '<p>邮箱：' + response.users[i].email + '</p>';
+                dataOptions += '<p>注册时间：' + response.users[i].create + '</p>';
+                dataOptions += '<p>账号状态：' + response.users[i].status + '</p>';
+                dataOptions += '<p>UUID：' + response.users[i].uuid + '</p>';
+                dataOptions += '<button id=' + i + 'type="button" class="mui-btn">' + text + '</button>';
+                dataOptions += '</div>';
+                dataOptions += '</li>';
+            }
+            $("#userInfo").html(dataOptions);
+            $("button").click(function (event) {
+                const str = event.target.id;
+                const userList = response.users[str.substring(0, 1)];
+                console.log(userList);
+                mui.confirm('是否锁定该用户', '用户', function (e) {
+                    if (e.index === 1) {
+                        $.ajax({
+                            url: http_url + '/user/v1/lock',
+                            type: 'POST',
+                            headers: {
+                                "token": "RB3SZhF3kk",
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify({
+                                "uuid": userList.uuid
+                            }),
+                            dataType: 'json',
+                            contentType: 'application/json; charset=UTF-8',
+                            success: function (response) {
+                                console.log(response);
+                                if (response.code === 201) {
+                                    mui.toast("请勿重复锁定");
+                                } else {
+                                    mui.toast("锁定成功");
+                                }
+                            }
+                        })
+                    }
+                });
+            });
+        }
+    });
+</script>
 </html>
