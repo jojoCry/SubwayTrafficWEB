@@ -73,20 +73,13 @@
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
                 success: function (response) {
+                    console.log(response);
                     if (response.type === 1) {
-                        // const token = response.token;
-                        // const type = response.type;
-                        // localStorage.setItem("token", token);
-                        // localStorage.setItem("type", type);
                         mui.openWindow({
                             id: 'user_page.html',
                             url: '../main_info_module/user_page.html'
                         });
                     } else if (response.type === 0) {
-                        // const token = response.token;
-                        // const type = response.type;
-                        // localStorage.setItem("token", token);
-                        // localStorage.setItem("type", type);
                         mui.openWindow({
                             id: 'admin_nav.html',
                             url: '../main_info_module/admin_nav.html'

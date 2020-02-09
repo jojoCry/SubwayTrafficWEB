@@ -12,17 +12,85 @@
     <style>
         body {
             background-color: #feffd9;
-            margin-top: 45px;
         }
     </style>
 </head>
 <body>
-<ul class="mui-table-view" id="userInfo">
-</ul>
+<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+    <div class="mui-scroll">
+        <!--数据列表-->
+        <ul class="mui-table-view" id="userInfo">
+        </ul>
+    </div>
+</div>
 </body>
 <script type="text/javascript" charset="UTF-8">
-    mui.init({});
-    const text = '锁定用户';
+    mui.init({
+        pullRefresh : {
+            container:"#refreshContainer",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+            down : {
+                callback : function refreshEnd() {
+                    $.ajax({
+                        url: http_url + '/user/v1/users',
+                        type: 'GET',
+                        dataType: 'json',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'token': "gX9zridfUz"
+                        },
+                        success: function (response) {
+                            console.log(response.users);
+                            let dataOptions = '';
+                            for (let i = 0; i < response.users.length; i++) {
+                                dataOptions += '<li class="mui-table-view-cell mui-collapse">';
+                                dataOptions += '<a class="mui-navigate-right" href="#">' + response.users[i].username + '</a>';
+                                dataOptions += '<div class="mui-collapse-content">';
+                                dataOptions += '<p>邮箱：' + response.users[i].email + '</p>';
+                                dataOptions += '<p>注册时间：' + response.users[i].create + '</p>';
+                                dataOptions += '<p id=lockStatus'+ i +'>账号状态：' + response.users[i].status + '</p>';
+                                dataOptions += '<p>UUID：' + response.users[i].uuid + '</p>';
+                                dataOptions += '<button id='+ i +' type="button" class="mui-btn">锁定用户</button>';
+                                dataOptions += '</div>';
+                                dataOptions += '</li>';
+                            }
+                            $("#userInfo").html(dataOptions);
+                            $("button").click(function (event) {
+                                const str = event.target.id;
+                                const userList = response.users[str.substring(0, 1)];
+                                console.log(str.substring(0, 1));
+                                mui.confirm('是否锁定该用户', '用户', function (e) {
+                                    if (e.index === 1) {
+                                        $.ajax({
+                                            url: http_url + '/user/v1/lock',
+                                            type: 'POST',
+                                            headers: {
+                                                "token": "gX9zridfUz",
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: JSON.stringify({
+                                                "uuid": userList.uuid
+                                            }),
+                                            dataType: 'json',
+                                            contentType: 'application/json; charset=UTF-8',
+                                            success: function (response) {
+                                                console.log(response);
+                                                if (response.code === 201) {
+                                                    mui.toast("请勿重复锁定");
+                                                } else {
+                                                    mui.toast("锁定成功");
+                                                }
+                                            }
+                                        })
+                                    }
+                                });
+                            });
+                        }
+                    });
+                    mui('#refreshContainer').pullRefresh().endPulldown();
+                } //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+            }
+        }
+    });
 
     $("#userInfo").html("");
     $.ajax({
@@ -31,7 +99,7 @@
         dataType: 'json',
         headers: {
             'Content-Type': 'application/json',
-            'token': 'RB3SZhF3kk'
+            'token': "gX9zridfUz"
         },
         success: function (response) {
             console.log(response.users);
@@ -42,9 +110,9 @@
                 dataOptions += '<div class="mui-collapse-content">';
                 dataOptions += '<p>邮箱：' + response.users[i].email + '</p>';
                 dataOptions += '<p>注册时间：' + response.users[i].create + '</p>';
-                dataOptions += '<p>账号状态：' + response.users[i].status + '</p>';
+                dataOptions += '<p id=lockStatus'+ i +'>账号状态：' + response.users[i].status + '</p>';
                 dataOptions += '<p>UUID：' + response.users[i].uuid + '</p>';
-                dataOptions += '<button id=' + i + 'type="button" class="mui-btn">' + text + '</button>';
+                dataOptions += '<button id='+ i +' type="button" class="mui-btn">锁定用户</button>';
                 dataOptions += '</div>';
                 dataOptions += '</li>';
             }
@@ -52,14 +120,14 @@
             $("button").click(function (event) {
                 const str = event.target.id;
                 const userList = response.users[str.substring(0, 1)];
-                console.log(userList);
+                console.log(str.substring(0, 1));
                 mui.confirm('是否锁定该用户', '用户', function (e) {
                     if (e.index === 1) {
                         $.ajax({
                             url: http_url + '/user/v1/lock',
                             type: 'POST',
                             headers: {
-                                "token": "RB3SZhF3kk",
+                                "token": "gX9zridfUz",
                                 'Content-Type': 'application/json'
                             },
                             data: JSON.stringify({
