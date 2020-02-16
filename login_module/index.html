@@ -73,7 +73,7 @@
                 contentType: "application/json; charset=UTF-8",
                 dataType: "json",
                 success: function (response) {
-                    console.log(response);
+                    localStorage.setItem("token", response.token);
                     if (response.type === 1) {
                         mui.openWindow({
                             id: 'user_page.html',

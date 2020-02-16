@@ -25,6 +25,7 @@
 </div>
 </body>
 <script type="text/javascript" charset="UTF-8">
+    const token = localStorage.getItem("token");
     mui.init({
         pullRefresh : {
             container:"#refreshContainer",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
@@ -36,7 +37,7 @@
                         dataType: 'json',
                         headers: {
                             'Content-Type': 'application/json',
-                            'token': "gX9zridfUz"
+                            'token': token
                         },
                         success: function (response) {
                             console.log(response.users);
@@ -64,7 +65,7 @@
                                             url: http_url + '/user/v1/lock',
                                             type: 'POST',
                                             headers: {
-                                                "token": "gX9zridfUz",
+                                                "token": token,
                                                 'Content-Type': 'application/json'
                                             },
                                             data: JSON.stringify({
@@ -99,7 +100,7 @@
         dataType: 'json',
         headers: {
             'Content-Type': 'application/json',
-            'token': "gX9zridfUz"
+            'token': token
         },
         success: function (response) {
             console.log(response.users);
@@ -127,7 +128,7 @@
                             url: http_url + '/user/v1/lock',
                             type: 'POST',
                             headers: {
-                                "token": "gX9zridfUz",
+                                "token": token,
                                 'Content-Type': 'application/json'
                             },
                             data: JSON.stringify({
